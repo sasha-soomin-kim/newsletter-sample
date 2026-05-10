@@ -1,0 +1,10 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: 'Pretendard Variable', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+  color: #2a2a3a;
+  background: #F4F4F6;
+  -webkit-font-smoothing: antialiased;
+}
