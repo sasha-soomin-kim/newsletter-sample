@@ -115,4 +115,28 @@ describe('appReducer', () => {
     const next = appReducer(initialState, { type: 'HYDRATE', state: replacement });
     expect(next).toEqual(replacement);
   });
+
+  it('UPDATE_MEMO에 알 수 없는 id를 주면 같은 state 참조를 반환한다', () => {
+    const s = stateWith([makeMemo({ id: 'a' })]);
+    const next = appReducer(s, { type: 'UPDATE_MEMO', id: 'ghost', patch: { title: 'x' } });
+    expect(next).toBe(s); // identity, not just equality
+  });
+
+  it('MOVE_MEMO에 알 수 없는 id를 주면 같은 state 참조를 반환한다', () => {
+    const s = stateWith([makeMemo({ id: 'a' })]);
+    const next = appReducer(s, { type: 'MOVE_MEMO', id: 'ghost', toColumn: 'remember', toIndex: 0 });
+    expect(next).toBe(s);
+  });
+
+  it('MOVE_MEMO는 범위를 벗어난 toIndex를 끝으로 클램프한다', () => {
+    const a = makeMemo({ id: 'a', column: 'remember' });
+    const b = makeMemo({ id: 'b', column: 'remember' });
+    const next = appReducer(stateWith([a, b]), {
+      type: 'MOVE_MEMO',
+      id: 'a',
+      toColumn: 'remember',
+      toIndex: 999,
+    });
+    expect(next.columnOrder.remember).toEqual(['b', 'a']);
+  });
 });
