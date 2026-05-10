@@ -46,3 +46,32 @@ body {
   padding: 0;
 }
 .pin-btn--pinned { opacity: 1 !important; background: #2a2a3a; color: white; }
+
+.memo-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(40, 40, 80, 0.04);
+  cursor: pointer;
+  transition: transform 0.15s;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.memo-card:hover { transform: translateY(-1px); }
+.memo-card:hover .pin-btn { opacity: 1; }
+.memo-card__title {
+  font-weight: 600; font-size: 13px; letter-spacing: -0.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+.memo-card__body {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  max-height: 110px; /* 12px / 1.5 기준 약 5줄 */
+}
+.memo-card__fade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 28px;
+  pointer-events: none;
+}
