@@ -149,3 +149,11 @@ body {
 
 .column { display: flex; flex-direction: column; gap: 14px; }
 .column__list { display: flex; flex-direction: column; gap: 14px; }
+
+.page { padding: 112px 192px; min-height: 100vh; }
+@media (max-width: 1280px) { .page { padding: 80px 64px; } }
+@media (max-width: 800px) { .page { padding: 48px 24px; } }
+.page__header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 48px; }
+.page__brand { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+.page__brand-sub { font-size: 12px; opacity: 0.45; margin-left: 10px; font-weight: 400; }
+.board { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
