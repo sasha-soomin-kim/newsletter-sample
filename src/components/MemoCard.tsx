@@ -20,7 +20,7 @@ export const MemoCard = forwardRef<HTMLDivElement, Props>(function MemoCard(
     <div
       ref={ref}
       className={`memo-card ${isDragging ? 'memo-card--dragging' : ''}`}
-      style={{ background: memo.color, ...dragStyle }}
+      style={{ background: memo.color, '--memo-color': memo.color, ...dragStyle } as CSSProperties}
       onClick={() => onOpen(memo.id)}
       role="button"
       tabIndex={0}
@@ -35,7 +35,7 @@ export const MemoCard = forwardRef<HTMLDivElement, Props>(function MemoCard(
       <div className="memo-card__title">{memo.title}</div>
       <div className="memo-card__body">
         <MarkdownView source={memo.body} variant="card" />
-        <div className="memo-card__fade" style={{ background: `linear-gradient(to bottom, transparent, ${memo.color})` }} />
+        <div className="memo-card__fade" />
       </div>
       <PinButton pinned={memo.pinned} onClick={() => onTogglePin(memo.id)} />
     </div>

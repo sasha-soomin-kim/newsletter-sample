@@ -50,6 +50,7 @@ body {
 .memo-card {
   position: relative;
   aspect-ratio: 1 / 1;
+  min-width: 0; /* flex item 기본 min-width:auto 차단 — 긴 제목이 카드를 늘리지 못하게 */
   border-radius: 14px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(40, 40, 80, 0.04);
@@ -61,9 +62,19 @@ body {
 .memo-card:hover { transform: translateY(-1px); }
 .memo-card:hover .pin-btn { opacity: 1; }
 .memo-card__title {
+  position: relative;
   font-weight: 600; font-size: 13px; letter-spacing: -0.01em;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; overflow: hidden;
   margin-bottom: 5px;
+  /* 긴 제목은 우측에서 카드 색으로 페이드아웃 */
+}
+.memo-card__title::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 32px;
+  background: linear-gradient(to right, transparent, var(--memo-color, currentColor));
+  pointer-events: none;
 }
 .memo-card__body {
   position: relative;
@@ -73,6 +84,7 @@ body {
 }
 .memo-card__fade {
   position: absolute; left: 0; right: 0; bottom: 0; height: 24px;
+  background: linear-gradient(to bottom, transparent, var(--memo-color, currentColor));
   pointer-events: none;
 }
 .color-picker { display: flex; gap: 8px; align-items: center; padding: 16px 0 14px; }
@@ -181,7 +193,12 @@ body {
 .page__header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 48px; }
 .page__brand { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
 .page__brand-sub { font-size: 12px; opacity: 0.45; margin-left: 10px; font-weight: 400; }
-.board { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
+.board {
+  display: grid;
+  /* minmax(0, 1fr): 컨텐츠 min-content가 트랙을 늘리지 못하게 → 카드 정사각형 유지 */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
 
 .memo-card--dragging { opacity: 0.4; }
 
