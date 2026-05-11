@@ -1,12 +1,15 @@
 import type { ColumnId, Memo } from '../types';
 import { COLUMN_LABELS } from '../constants';
 import { ColumnHeader } from './ColumnHeader';
-import { MemoCard } from './MemoCard';
 import { NewMemoCard } from './NewMemoCard';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import { MemoCard } from './MemoCard';
 
 type Props = {
   columnId: ColumnId;
-  memos: Memo[];
+  memos: Memo[]; // 이미 정렬됨: 핀 우선
   drafting: boolean;
   onAdd: () => void;
   onCommitDraft: (data: { title: string; body: string }) => void;
@@ -14,6 +17,35 @@ type Props = {
   onOpenMemo: (id: string) => void;
   onTogglePin: (id: string) => void;
 };
+
+function SortableMemoCard({
+  memo,
+  onOpen,
+  onTogglePin,
+}: {
+  memo: Memo;
+  onOpen: (id: string) => void;
+  onTogglePin: (id: string) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: memo.id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  return (
+    <MemoCard
+      ref={setNodeRef}
+      memo={memo}
+      onOpen={onOpen}
+      onTogglePin={onTogglePin}
+      dragHandleProps={{ ...attributes, ...listeners }}
+      dragStyle={style}
+      isDragging={isDragging}
+    />
+  );
+}
 
 export function Column({
   columnId,
@@ -25,21 +57,19 @@ export function Column({
   onOpenMemo,
   onTogglePin,
 }: Props) {
-  // 정렬: 핀 우선 (배열 순서 유지) → 일반 (배열 순서 유지)
-  const pinned = memos.filter((m) => m.pinned);
-  const rest = memos.filter((m) => !m.pinned);
-  const sorted = [...pinned, ...rest];
+  const ids = memos.map((m) => m.id);
+  const { setNodeRef } = useDroppable({ id: `col:${columnId}`, data: { columnId } });
 
   return (
     <div className="column" data-column={columnId}>
       <ColumnHeader title={COLUMN_LABELS[columnId]} onAdd={onAdd} />
-      <div className="column__list">
-        {drafting && (
-          <NewMemoCard onCommit={onCommitDraft} onCancel={onCancelDraft} />
-        )}
-        {sorted.map((memo) => (
-          <MemoCard key={memo.id} memo={memo} onOpen={onOpenMemo} onTogglePin={onTogglePin} />
-        ))}
+      <div className="column__list" ref={setNodeRef}>
+        {drafting && <NewMemoCard onCommit={onCommitDraft} onCancel={onCancelDraft} />}
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          {memos.map((memo) => (
+            <SortableMemoCard key={memo.id} memo={memo} onOpen={onOpenMemo} onTogglePin={onTogglePin} />
+          ))}
+        </SortableContext>
       </div>
     </div>
   );

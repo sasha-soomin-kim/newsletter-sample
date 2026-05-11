@@ -1,3 +1,4 @@
+import { forwardRef, type CSSProperties, type HTMLAttributes } from 'react';
 import type { Memo } from '../types';
 import { MarkdownView } from './MarkdownView';
 import { PinButton } from './PinButton';
@@ -6,13 +7,20 @@ type Props = {
   memo: Memo;
   onOpen: (id: string) => void;
   onTogglePin: (id: string) => void;
+  dragHandleProps?: HTMLAttributes<HTMLDivElement>;
+  dragStyle?: CSSProperties;
+  isDragging?: boolean;
 };
 
-export function MemoCard({ memo, onOpen, onTogglePin }: Props) {
+export const MemoCard = forwardRef<HTMLDivElement, Props>(function MemoCard(
+  { memo, onOpen, onTogglePin, dragHandleProps, dragStyle, isDragging },
+  ref
+) {
   return (
     <div
-      className="memo-card"
-      style={{ background: memo.color }}
+      ref={ref}
+      className={`memo-card ${isDragging ? 'memo-card--dragging' : ''}`}
+      style={{ background: memo.color, ...dragStyle }}
       onClick={() => onOpen(memo.id)}
       role="button"
       tabIndex={0}
@@ -22,6 +30,7 @@ export function MemoCard({ memo, onOpen, onTogglePin }: Props) {
           onOpen(memo.id);
         }
       }}
+      {...dragHandleProps}
     >
       <div className="memo-card__title">{memo.title}</div>
       <div className="memo-card__body">
@@ -31,4 +40,4 @@ export function MemoCard({ memo, onOpen, onTogglePin }: Props) {
       <PinButton pinned={memo.pinned} onClick={() => onTogglePin(memo.id)} />
     </div>
   );
-}
+});
