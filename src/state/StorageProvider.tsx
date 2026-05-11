@@ -18,8 +18,6 @@ const SAMPLE_BODY = `이 메모 앱은 **마크다운**을 지원합니다.
 1. 단계 하나
 2. 단계 둘
 
-> 인용문도 표현할 수 있어요.
-
 링크: [Anthropic](https://anthropic.com)`;
 
 const SAMPLE_INJECTED_KEY = 'memo-app:sample-injected';
