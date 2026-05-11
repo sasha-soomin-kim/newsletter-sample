@@ -1,10 +1,20 @@
-import type { Action, AppState, ColumnId } from '../types';
+import type { Action, AppState, ColumnId, Memo } from '../types';
 
 export const initialState: AppState = {
   memos: {},
   columnOrder: { reference: [], remember: [], disposable: [] },
   version: 1,
 };
+
+function partitionPinnedFirst(memos: Record<string, Memo>, ids: string[]): string[] {
+  const pinned: string[] = [];
+  const unpinned: string[] = [];
+  for (const id of ids) {
+    if (memos[id]?.pinned) pinned.push(id);
+    else unpinned.push(id);
+  }
+  return [...pinned, ...unpinned];
+}
 
 function removeFromAllColumns(
   columnOrder: AppState['columnOrder'],
@@ -27,12 +37,14 @@ export function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
     case 'CREATE_MEMO': {
       const memo = action.memo;
+      const memosNext = { ...state.memos, [memo.id]: memo };
+      const colOrder = [memo.id, ...state.columnOrder[memo.column]];
       return {
         ...state,
-        memos: { ...state.memos, [memo.id]: memo },
+        memos: memosNext,
         columnOrder: {
           ...state.columnOrder,
-          [memo.column]: [memo.id, ...state.columnOrder[memo.column]],
+          [memo.column]: partitionPinnedFirst(memosNext, colOrder),
         },
       };
     }
@@ -56,11 +68,14 @@ export function appReducer(state: AppState, action: Action): AppState {
     case 'TOGGLE_PIN': {
       const existing = state.memos[action.id];
       if (!existing) return state;
+      const updated = { ...existing, pinned: !existing.pinned, updatedAt: Date.now() };
+      const memosNext = { ...state.memos, [action.id]: updated };
       return {
         ...state,
-        memos: {
-          ...state.memos,
-          [action.id]: { ...existing, pinned: !existing.pinned, updatedAt: Date.now() },
+        memos: memosNext,
+        columnOrder: {
+          ...state.columnOrder,
+          [updated.column]: partitionPinnedFirst(memosNext, state.columnOrder[updated.column]),
         },
       };
     }
@@ -75,10 +90,14 @@ export function appReducer(state: AppState, action: Action): AppState {
       const cleanedOrder = removeFromAllColumns(state.columnOrder, action.id);
       const targetCol: ColumnId = action.toColumn;
       const newOrder = insertAt(cleanedOrder[targetCol], action.id, action.toIndex);
+      const memosNext = { ...state.memos, [action.id]: { ...memo, column: targetCol, updatedAt: Date.now() } };
       return {
         ...state,
-        memos: { ...state.memos, [action.id]: { ...memo, column: targetCol, updatedAt: Date.now() } },
-        columnOrder: { ...cleanedOrder, [targetCol]: newOrder },
+        memos: memosNext,
+        columnOrder: {
+          ...cleanedOrder,
+          [targetCol]: partitionPinnedFirst(memosNext, newOrder),
+        },
       };
     }
     case 'HYDRATE':

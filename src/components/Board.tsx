@@ -14,13 +14,9 @@ export function Board() {
   const memosByColumn = useMemo(() => {
     const out: Record<ColumnId, Memo[]> = { reference: [], remember: [], disposable: [] };
     for (const colId of COLUMN_IDS) {
-      const inOrder = state.columnOrder[colId]
+      out[colId] = state.columnOrder[colId]
         .map((id) => state.memos[id])
         .filter((m): m is Memo => Boolean(m));
-      // 핀 우선 정렬 (배열 순서 유지)
-      const pinned = inOrder.filter((m) => m.pinned);
-      const rest = inOrder.filter((m) => !m.pinned);
-      out[colId] = [...pinned, ...rest];
     }
     return out;
   }, [state]);

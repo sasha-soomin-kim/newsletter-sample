@@ -139,4 +139,37 @@ describe('appReducer', () => {
     });
     expect(next.columnOrder.remember).toEqual(['b', 'a']);
   });
+
+  it('CREATE_MEMO한 핀 메모는 비고정 메모들 위에 삽입된다', () => {
+    const u1 = makeMemo({ id: 'u1', column: 'remember', pinned: false });
+    const u2 = makeMemo({ id: 'u2', column: 'remember', pinned: false });
+    const newPinned = makeMemo({ id: 'p1', column: 'remember', pinned: true });
+    const next = appReducer(stateWith([u1, u2]), { type: 'CREATE_MEMO', memo: newPinned });
+    expect(next.columnOrder.remember).toEqual(['p1', 'u1', 'u2']);
+  });
+
+  it('TOGGLE_PIN으로 고정되면 해당 메모가 열 상단으로 이동한다', () => {
+    const a = makeMemo({ id: 'a', column: 'remember', pinned: false });
+    const b = makeMemo({ id: 'b', column: 'remember', pinned: false });
+    const c = makeMemo({ id: 'c', column: 'remember', pinned: false });
+    // storage: [a, b, c]
+    const next = appReducer(stateWith([a, b, c]), { type: 'TOGGLE_PIN', id: 'c' });
+    expect(next.columnOrder.remember).toEqual(['c', 'a', 'b']);
+    expect(next.memos.c.pinned).toBe(true);
+  });
+
+  it('MOVE_MEMO 후에도 핀 우선 순서를 유지한다', () => {
+    const p = makeMemo({ id: 'p', column: 'remember', pinned: true });
+    const a = makeMemo({ id: 'a', column: 'remember', pinned: false });
+    const b = makeMemo({ id: 'b', column: 'remember', pinned: false });
+    // storage: [p, a, b]
+    // Try to move 'p' to index 2 (visually below b). Pinned-first invariant should snap p back to top.
+    const next = appReducer(stateWith([p, a, b]), {
+      type: 'MOVE_MEMO',
+      id: 'p',
+      toColumn: 'remember',
+      toIndex: 2,
+    });
+    expect(next.columnOrder.remember).toEqual(['p', 'a', 'b']);
+  });
 });
