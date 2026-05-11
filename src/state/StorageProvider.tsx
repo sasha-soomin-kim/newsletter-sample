@@ -22,11 +22,12 @@ const SAMPLE_BODY = `이 메모 앱은 **마크다운**을 지원합니다.
 
 링크: [Anthropic](https://anthropic.com)`;
 
-function seedInitialState(): AppState {
-  const id = crypto.randomUUID();
+const SAMPLE_INJECTED_KEY = 'memo-app:sample-injected';
+
+function makeSampleMemo(): Memo {
   const now = Date.now();
-  const sample: Memo = {
-    id,
+  return {
+    id: crypto.randomUUID(),
     title: '이렇게 사용해보세요',
     body: SAMPLE_BODY,
     color: PALETTE[0],
@@ -35,19 +36,52 @@ function seedInitialState(): AppState {
     createdAt: now,
     updatedAt: now,
   };
+}
+
+function markSampleInjected(): void {
+  try {
+    localStorage.setItem(SAMPLE_INJECTED_KEY, 'true');
+  } catch {
+    // 무시
+  }
+}
+
+function isSampleInjected(): boolean {
+  try {
+    return localStorage.getItem(SAMPLE_INJECTED_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function withSample(state: AppState): AppState {
+  const sample = makeSampleMemo();
   return {
-    memos: { [id]: sample },
-    columnOrder: { reference: [id], remember: [], disposable: [] },
-    version: STATE_VERSION,
+    ...state,
+    memos: { ...state.memos, [sample.id]: sample },
+    columnOrder: {
+      ...state.columnOrder,
+      reference: [sample.id, ...state.columnOrder.reference],
+    },
   };
 }
 
 function loadFromStorage(): AppState {
+  const injected = isSampleInjected();
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!raw) return seedInitialState();
+    if (!raw) {
+      // 진짜 첫 진입: 빈 상태 위에 샘플 메모 시드
+      markSampleInjected();
+      return withSample(initialState);
+    }
     const parsed = JSON.parse(raw) as AppState;
     if (parsed.version !== STATE_VERSION) return initialState;
+    if (!injected) {
+      // 기존 사용자(샘플 도입 전부터 데이터가 있던 경우): 1회 주입
+      markSampleInjected();
+      return withSample(parsed);
+    }
     return parsed;
   } catch {
     return initialState;
