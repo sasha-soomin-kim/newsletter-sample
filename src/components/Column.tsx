@@ -70,6 +70,9 @@ export function Column({
             <SortableMemoCard key={memo.id} memo={memo} onOpen={onOpenMemo} onTogglePin={onTogglePin} />
           ))}
         </SortableContext>
+        {!drafting && memos.length === 0 && (
+          <div className="column__empty">＋ 버튼을 눌러서 추가하세요</div>
+        )}
       </div>
     </div>
   );

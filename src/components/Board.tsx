@@ -31,7 +31,7 @@ export function Board() {
     const now = Date.now();
     const memo: Memo = {
       id: crypto.randomUUID(),
-      title: data.title || ' ',
+      title: data.title || '제목없음',
       body: data.body,
       color: randomColor(),
       column: col,
