@@ -68,11 +68,11 @@ body {
 .memo-card__body {
   position: relative;
   flex: 1;
+  min-height: 0; /* flex 자식이 컨텐츠로 부풀지 않도록 */
   overflow: hidden;
-  max-height: 110px; /* 12px / 1.5 기준 약 5줄 */
 }
 .memo-card__fade {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 28px;
+  position: absolute; left: 0; right: 0; bottom: 0; height: 24px;
   pointer-events: none;
 }
 .color-picker { display: flex; gap: 8px; align-items: center; padding: 16px 0 14px; }
