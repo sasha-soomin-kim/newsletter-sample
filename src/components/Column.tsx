@@ -71,7 +71,13 @@ export function Column({
           ))}
         </SortableContext>
         {!drafting && memos.length === 0 && (
-          <div className="column__empty">＋ 버튼을 눌러서 추가하세요</div>
+          <button
+            type="button"
+            className="column__empty"
+            onClick={onAdd}
+          >
+            ＋ 버튼을 눌러서 추가하세요
+          </button>
         )}
       </div>
     </div>

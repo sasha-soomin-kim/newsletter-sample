@@ -75,7 +75,7 @@ body {
   position: relative;
   font-weight: 600; font-size: 13px; letter-spacing: -0.01em;
   white-space: nowrap; overflow: hidden;
-  margin-bottom: 5px;
+  margin-bottom: 12px;
   /* 긴 제목은 우측에서 카드 색으로 페이드아웃 */
 }
 .memo-card__title::after {
@@ -177,7 +177,7 @@ body {
 .memo-card__new-title {
   font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
   color: #2a2a3a; background: transparent; border: none; outline: none;
-  margin-bottom: 5px; padding: 0;
+  margin-bottom: 12px; padding: 0;
   font-family: inherit;
 }
 .memo-card__new-title::placeholder { color: #9a9aa2; }
@@ -216,21 +216,31 @@ body {
    디자인 폴리시 — 빈 상태, 애니메이션, 전환 효과
    ==================================================================== */
 
-/* 빈 열 zero-state */
+/* 빈 열 zero-state — 클릭 가능한 버튼 */
 .column__empty {
+  display: block;
+  width: 100%;
+  font-family: inherit;
   font-size: 12px;
   color: #b0b0b8;
   text-align: center;
   padding: 28px 12px;
+  background: transparent;
   border: 1.5px dashed rgba(40, 40, 80, 0.08);
   border-radius: 14px;
   letter-spacing: -0.005em;
   user-select: none;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
-.column:hover .column__empty {
-  border-color: rgba(40, 40, 80, 0.16);
-  color: #888893;
+.column__empty:hover {
+  border-color: rgba(40, 40, 80, 0.2);
+  color: #6a6a78;
+  background: rgba(255, 255, 255, 0.4);
+}
+.column__empty:focus-visible {
+  outline: 2px solid rgba(40, 40, 80, 0.35);
+  outline-offset: 2px;
 }
 
 /* 카드 호버 — 더 입체적인 부양 효과 */
