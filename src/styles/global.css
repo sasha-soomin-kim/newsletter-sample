@@ -81,3 +81,47 @@ body {
 .color-dot:hover { transform: scale(1.15); }
 .color-dot:focus-visible { outline: 2px solid #2a2a3a; outline-offset: 3px; }
 .color-dot--active { box-shadow: 0 0 0 2px rgba(255,255,255,0.7), 0 0 0 4px #2a2a3a; }
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(40,40,60,0.32);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.modal {
+  border-radius: 20px; padding: 40px 44px;
+  width: min(560px, 92vw); min-height: 360px; max-height: 80vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 60px rgba(40,40,80,0.18);
+  position: relative;
+  transition: background 0.25s ease;
+  overflow-y: auto;
+}
+.modal__close {
+  position: absolute; top: 18px; right: 18px;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #2a2a3a; opacity: 0.55; cursor: pointer;
+  background: transparent; border: none; padding: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+.modal__close:hover { opacity: 1; background: rgba(255,255,255,0.4); }
+.modal__title { font-size: 22px; font-weight: 700; margin: 0 36px 18px 0; letter-spacing: -0.02em; color: #2a2a3a; }
+.modal__body { flex: 1; min-height: 0; }
+.modal__title-input {
+  font-size: 22px; font-weight: 700; padding: 4px 0; margin: 0 36px 18px 0;
+  border: none; border-bottom: 1px solid rgba(40,40,80,0.1);
+  background: transparent; outline: none; color: #2a2a3a;
+  font-family: inherit; letter-spacing: -0.02em;
+}
+.modal__body-input {
+  font-size: 13px; line-height: 1.7; color: #3a3a44;
+  min-height: 180px; flex: 1;
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  border: none; outline: none; background: transparent; resize: vertical;
+  padding: 0;
+}
+.modal__foot { display: flex; gap: 8px; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid rgba(40,40,80,0.08); }
+.modal__meta { font-size: 11px; opacity: 0.55; color: #2a2a3a; }
+.modal__actions { display: flex; gap: 6px; }
+.chip { font-size: 12px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,0.55); color: #2a2a3a; cursor: pointer; font-weight: 500; border: none; }
+.chip--primary { background: #2a2a3a; color: white; }
