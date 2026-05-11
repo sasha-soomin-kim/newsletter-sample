@@ -78,3 +78,61 @@ describe('MemoModal — 보기 모드', () => {
     expect(onChangeColor).toHaveBeenCalledWith('m1', '#E0D6E8');
   });
 });
+
+describe('MemoModal — 편집 모드', () => {
+  it('편집 클릭 시 편집 모드로 전환된다', async () => {
+    render(
+      <MemoModal
+        memo={memo}
+        onClose={() => {}}
+        onUpdate={() => {}}
+        onChangeColor={() => {}}
+        onDelete={() => {}}
+      />
+    );
+    await userEvent.click(screen.getByRole('button', { name: '편집' }));
+    expect(screen.getByDisplayValue('Hello')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '취소' })).toBeInTheDocument();
+  });
+
+  it('취소 시 onUpdate가 호출되지 않고 변경이 되돌려진다', async () => {
+    const onUpdate = vi.fn();
+    render(
+      <MemoModal
+        memo={memo}
+        onClose={() => {}}
+        onUpdate={onUpdate}
+        onChangeColor={() => {}}
+        onDelete={() => {}}
+      />
+    );
+    await userEvent.click(screen.getByRole('button', { name: '편집' }));
+    const titleInput = screen.getByDisplayValue('Hello');
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, 'Changed');
+    await userEvent.click(screen.getByRole('button', { name: '취소' }));
+    expect(onUpdate).not.toHaveBeenCalled();
+    // 보기 모드로 복귀 — 원래 제목이 보임
+    expect(screen.getByText('Hello')).toBeInTheDocument();
+  });
+
+  it('저장 시 onUpdate가 호출된다', async () => {
+    const onUpdate = vi.fn();
+    render(
+      <MemoModal
+        memo={memo}
+        onClose={() => {}}
+        onUpdate={onUpdate}
+        onChangeColor={() => {}}
+        onDelete={() => {}}
+      />
+    );
+    await userEvent.click(screen.getByRole('button', { name: '편집' }));
+    const titleInput = screen.getByDisplayValue('Hello');
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, 'Changed');
+    await userEvent.click(screen.getByRole('button', { name: '저장' }));
+    expect(onUpdate).toHaveBeenCalledWith('m1', { title: 'Changed', body: '**body**' });
+  });
+});
